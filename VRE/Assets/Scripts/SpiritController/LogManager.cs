@@ -37,7 +37,7 @@ public class LogManager : MonoBehaviour
 		{
 			m_logTimer = 0;
 			sr.WriteLine(data + time);
-			Debug.Log(data + ", " + time);
+			//Debug.Log(data + ", " + time);
 		}
 
 		m_pictureTimer += Time.deltaTime;
