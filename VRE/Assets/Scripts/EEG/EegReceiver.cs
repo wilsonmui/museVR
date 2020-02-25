@@ -14,6 +14,7 @@ namespace OscSimpl.Examples
 		public float thetaAbsolute;
 		public float alphaAbsolute;
 		public float betaAbsolute;
+		public float concentrationIndex;
 
 
 		//const string address1 = "/test1";
@@ -27,8 +28,9 @@ namespace OscSimpl.Examples
 			connectivity = "";
 			deltaAbsolute = 0;;
 			thetaAbsolute = 0;;
-			alphaAbsolute = 0; ;
+			alphaAbsolute = 0;
 			betaAbsolute = 0;
+			concentrationIndex = 0;
 			// Ensure that we have a OscIn component and start receiving on port 7000.
 			if (!_oscIn) _oscIn = gameObject.AddComponent<OscIn>();
 			_oscIn.Open(7000);
@@ -58,8 +60,12 @@ namespace OscSimpl.Examples
 			// If you want to stop receiving messages you have to "unmap".
 			//_oscIn.UnmapFloat( OnTest1 );
 			//_oscIn.Unmap( OnTest2 );
-			_oscIn.UnmapFloat( OnDelta );
 			_oscIn.Unmap(OnGyro);
+			_oscIn.Unmap(OnConnectivity);
+			_oscIn.UnmapFloat(OnDelta);
+			_oscIn.UnmapFloat(OnTheta);
+			_oscIn.UnmapFloat(OnAlpha);
+			_oscIn.UnmapFloat(OnBeta);
 		}
 
 		void OnGyro(OscMessage message)
@@ -115,6 +121,9 @@ namespace OscSimpl.Examples
 		{ 
 			if(!connectivity.Equals("bad"))
 				thetaAbsolute = value;
+			if (thetaAbsolute != 0)
+				concentrationIndex = betaAbsolute / thetaAbsolute;
+
 		}
 		void OnAlpha(float value)
 		{

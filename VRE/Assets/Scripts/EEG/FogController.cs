@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 
-public class FogCleaner : MonoBehaviour
+public class FogController : MonoBehaviour
 {
 	public Material fogMaterial;
 	public GameObject fogCavas;
