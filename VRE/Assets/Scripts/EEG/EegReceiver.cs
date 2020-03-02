@@ -40,7 +40,7 @@ namespace OscSimpl.Examples
 		int difficultCounter; //
 		const int MAX_DIFFICULT_TIME = 10; // stuck in difficult after MAX_DIFFICULT_TIME will reduce difficulty
 
-		float inSecondConcentrationIndexSum; // concentration index sum in this second
+		public float inSecondConcentrationIndexSum; // concentration index sum in this second
 		public List<float> concentrationIndexList; // record of concentration index of each second
 
 		const float THRESHOLD_SCALE = 1.3f;

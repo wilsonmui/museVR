@@ -25,7 +25,8 @@ public class LogManager : MonoBehaviour
 		pictureTimer = 0;
 		eegReceiver = GetComponent<OscSimpl.Examples.EegReceiver>();
 		sceneController = GetComponent<SceneController>();
-		
+		CreateLogFiles();
+
 
 	}
 
