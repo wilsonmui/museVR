@@ -35,7 +35,7 @@ namespace OscSimpl.Examples
 		public float maxConcentrationIndexThreshold; // relaxing concentraion index * 1.3f
 		public float minConcentrationIndexThreshold; // relaxing concentraion index
 
-		const float MAX_DIFFICULTY = 100;
+		const float MAX_DIFFICULTY = 1;
 		public float difficulty; // for tuning proper threshold 
 		int difficultCounter; //
 		const int MAX_DIFFICULT_TIME = 10; // stuck in difficult after MAX_DIFFICULT_TIME will reduce difficulty
@@ -50,6 +50,7 @@ namespace OscSimpl.Examples
 
 		int concentratingCounter; // how many concentrating seconds
 		SceneController sceneController;
+		LogManager logManager;
 		void Start()
 		{
 			// initial values
@@ -78,9 +79,12 @@ namespace OscSimpl.Examples
 
 			concentratingCounter = (int)RELAXATION_WINDOW_LENGTH;
 			sceneController = GetComponent<SceneController>();
+			logManager = GetComponent<LogManager>();
 			// Ensure that we have a OscIn component and start receiving on port 7000.
 			if (!_oscIn) _oscIn = gameObject.AddComponent<OscIn>();
 			_oscIn.Open(7000);
+
+			logManager.LogEventData("Initiate");
 		}
 
 		private void Update()
@@ -337,7 +341,7 @@ namespace OscSimpl.Examples
 			variousConcentrationIndex[1] = (betaAbsolute[1] + betaAbsolute[2]) / (thetaAbsolute[1] + thetaAbsolute[2]);
 			variousConcentrationIndex[2] = betaAbsolute[1] + betaAbsolute[2] - thetaAbsolute[1] + thetaAbsolute[2];
 			variousConcentrationIndex[3] = thetaAbsolute[1] + thetaAbsolute[2];
-			currentConcentrationIndex = variousConcentrationIndex[3];
+			currentConcentrationIndex = variousConcentrationIndex[2];
 			if (writeAccess == true)
 			{
 				inSecondConcentrationIndexSum += currentConcentrationIndex;
@@ -356,6 +360,8 @@ namespace OscSimpl.Examples
 			maxConcentrationIndexThreshold = concentrationSum / RELAXATION_WINDOW_LENGTH * THRESHOLD_SCALE;
 			minConcentrationIndexThreshold = concentrationSum / RELAXATION_WINDOW_LENGTH;
 			concentrationIndexThreshold = maxConcentrationIndexThreshold;
+			logManager.LogEventData("Set max threshold " + maxConcentrationIndexThreshold.ToString());
+			logManager.LogEventData("Set min threshold " + minConcentrationIndexThreshold.ToString());
 		}
 
 		void SetConcentrationIndexList()
@@ -366,6 +372,7 @@ namespace OscSimpl.Examples
 			{
 				writeAccess = false;
 				concentrationIndexList.Add(inSecondConcentrationIndexSum / frameCounter);
+				logManager.LogEventData("Current concentration " + concentrationIndexList[concentrationIndexList.Count - 1]);
 				frameCounter = 0;
 				inSecondConcentrationIndexSum = 0;
 
@@ -391,6 +398,7 @@ namespace OscSimpl.Examples
 
 		void NextState()
 		{
+			string lastState = currentState;
 			switch(currentState)
 			{
 				case STATE_IDLE:
@@ -406,6 +414,7 @@ namespace OscSimpl.Examples
 					currentState = STATE_BIRD;
 					break;
 			}
+			logManager.LogEventData("Change state " + lastState + "->" + currentState);
 		}
 
 		void ControlScene()
@@ -414,6 +423,7 @@ namespace OscSimpl.Examples
 			{
 				if(sceneController.ClearFog() == true)
 				{
+					logManager.LogEventData("Clear fog");
 					NextState();
 				}
 			}
@@ -421,6 +431,7 @@ namespace OscSimpl.Examples
 			{
 				if(sceneController.MuteBirdTweet() == true)
 				{
+					logManager.LogEventData("Mute bird");
 					NextState();
 				}
 			}
@@ -434,6 +445,7 @@ namespace OscSimpl.Examples
 		{
 			difficulty *= .9f;
 			concentrationIndexThreshold = difficulty * maxConcentrationIndexThreshold + (1 - difficulty) * minConcentrationIndexThreshold;
+			logManager.LogEventData("Reduce difficult to " + difficulty.ToString());
 		}
 	}
 }

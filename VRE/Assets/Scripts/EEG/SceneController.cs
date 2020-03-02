@@ -7,12 +7,12 @@ using System;
 public class SceneController : MonoBehaviour
 {
 	public Material fogMaterial;
-	public GameObject fogCavas;
+	public GameObject fogHole;
 	const float INTRO_FADE_TIME_LENGTH = 3f;
 	float introFadeTimer;
 	bool fadingIntro;
 	const float MAX_CLEAR_FOG_MAT_SCALE = 10;
-	const float CLEAR_FOG_UI_SCALE = 5;
+	const float CLEAR_FOG_HOLE_SCALE = 1.05f;
 	const int CLEAR_FOG_MAX_COUNTER = 99;
 	int clearFogCounter = 0;
 	public GameObject introMusic;
@@ -29,7 +29,8 @@ public class SceneController : MonoBehaviour
 		introFadeTimer = 0;
 		fadingIntro = false;
 		fogMaterial.SetFloat("_Density", 500);
-		fogCavas.GetComponent<Image>().color = new Color32(54, 148, 255, 200);
+		fogHole.transform.localPosition = new Vector3(0.603f, -1.85f, -0.334f);
+		fogHole.transform.localScale = new Vector3(100, 100, 100);
 	}
 
     // Update is called once per frame
@@ -55,12 +56,9 @@ public class SceneController : MonoBehaviour
 			fogMaterial.SetFloat("_Density", currentDensity - clearMat);
 		}
 
-		Color32 uiColor = fogCavas.GetComponent<Image>().color;
-		if (uiColor.a > CLEAR_FOG_UI_SCALE)
-		{
-			uiColor.a = Convert.ToByte(uiColor.a - CLEAR_FOG_UI_SCALE);
-			fogCavas.GetComponent<Image>().color = uiColor;
-		}
+		fogHole.transform.localScale = new Vector3(fogHole.transform.localScale.x * CLEAR_FOG_HOLE_SCALE,
+			fogHole.transform.localScale.y * CLEAR_FOG_HOLE_SCALE,
+			fogHole.transform.localScale.z);
 
 		return false;
 	}
@@ -74,7 +72,9 @@ public class SceneController : MonoBehaviour
 		else if (Input.GetKeyDown(KeyCode.R))
 		{
 			fogMaterial.SetFloat("_Density", 500);
-			fogCavas.GetComponent<Image>().color = new Color32(54, 148, 255, 200);
+			fogHole.transform.localPosition = new Vector3(0.603f, -1.85f, -0.334f);
+			fogHole.transform.localScale = new Vector3(100, 100, 100);
+			clearFogCounter = 0;
 		}
 		
 	}
